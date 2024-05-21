@@ -22,25 +22,25 @@ namespace Clicker.Scripts.Runtime.Controller
         public void Dispose()
         {
             _dispose.Dispose();
+            _clickModel.ItemInitialized -= OnItemInitialized;
         }
 
         public void Initialize()
         {
-            _clickModel.ShopItems.Select(_shopView.ShopItemViewsMap, (x, y) => (x, y[x.ItemType])).Subscribe(Bind);
+            _clickModel.ItemInitialized += OnItemInitialized;
         }
-
-        private void Bind((ShopItem, ShopItemView) shopItemPair)
+        
+        private void OnItemInitialized()
         {
-            var (shopItem, itemView) = shopItemPair;
-            BindToText(shopItem.Cost, itemView.Cost);
-            BindToText(shopItem.Value, itemView.Value);
-        }
-
-        private void BindToText(Observable<double> property, TMP_Text textField)
-        {
-            property
-                .Subscribe(textField, (x, text) => text.text = x.ToString(CultureInfo.InvariantCulture))
-                .AddTo(ref _dispose);
+            foreach (var (itemType, value) in _clickModel.ShopItems) {
+                var textField = _shopView.ShopItemViewsMap[itemType];
+                value
+                    .Subscribe(textField, (x, text) => {
+                        text.Cost.text = x.Cost.ToString(CultureInfo.InvariantCulture);
+                        text.Value.text = x.Value.ToString(CultureInfo.InvariantCulture);
+                    })
+                    .AddTo(ref _dispose);
+            }
         }
     }
 }

@@ -8,12 +8,12 @@ using VContainer.Unity;
 
 namespace Clicker.Scripts.Runtime.Controller
 {
-    public class EnemyController : IInitializable, IAsyncStartable
+    public class EnemyController : IInitializable
     {
         private readonly IClickModel _clickModel;
         private readonly IEnemyModel _enemyModel;
         private readonly EnemyView _enemyView;
-        private ShopItem _clickItem;
+        private ShopItemLevel _clickItemLevel;
 
         public EnemyController(IEnemyModel enemyModel, EnemyView enemyView, IClickModel clickModel)
         {
@@ -26,16 +26,12 @@ namespace Clicker.Scripts.Runtime.Controller
         {
             _enemyView.ClickButton.onClick.AddListener(OnEnemyClick);
         }
-        public async UniTask StartAsync(CancellationToken cancellation)
-        {
-            _clickItem = await _clickModel.ShopItems.FirstAsync(x=>x.ItemType == ItemType.Click, cancellationToken: cancellation);
-        }
 
         private void OnEnemyClick()
         {
             var currentEnemy = _enemyModel.Enemy.CurrentValue;
             var currentHp = currentEnemy.Hp.CurrentValue;
-            var click = _clickItem.Value.CurrentValue;
+            var click = _clickModel.ShopItems[ItemType.Click].CurrentValue.Value;
 
             // var chance = _clickModel.ShopItemsMap[ItemType.CritChance].Value.CurrentValue <= Random.value;
 

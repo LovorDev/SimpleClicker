@@ -25,13 +25,17 @@ namespace Clicker.Scripts.Runtime.Root
             builder.RegisterInstance(_shopView);
             builder.RegisterInstance(_enemyView);
 
-            builder.Register<ClickerModel>(Lifetime.Scoped).AsImplementedInterfaces();
+            builder.Register<ClickerModel>(Lifetime.Scoped).AsSelf().AsImplementedInterfaces();
 
             builder.RegisterEntryPoint<EnemyController>();
             builder.RegisterEntryPoint<EnemyViewModel>();
             builder.RegisterEntryPoint<ShopController>();
             builder.RegisterEntryPoint<ShopUpgradeController>();
+            
             builder.RegisterEntryPoint<ShopViewModel>();
+            
+            builder.RegisterEntryPoint<ShopItemFactory>();
+            builder.RegisterFactory<ItemType,int>(x => 0);
         }
     }
 }

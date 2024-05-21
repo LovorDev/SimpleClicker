@@ -1,4 +1,5 @@
-﻿using Clicker.Scripts.Runtime.Model;
+﻿using System;
+using Clicker.Scripts.Runtime.Model;
 using Clicker.Scripts.Runtime.View;
 using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Linq;
@@ -7,34 +8,38 @@ using VContainer.Unity;
 
 namespace Clicker.Scripts.Runtime.Controller
 {
-    public class ShopController : IInitializable
+    public class ShopController : IInitializable, IDisposable
     {
         private readonly IClickModel _clickModel;
         private readonly IShopModel _shopModel;
         private readonly ShopView _shopView;
+        private DisposableBag _dispose;
         public ShopController(IShopModel shopModel, IClickModel clickModel, ShopView shopView)
         {
             _shopModel = shopModel;
             _clickModel = clickModel;
             _shopView = shopView;
         }
+        public void Dispose()
+        {
+            _dispose.Dispose();
+            _clickModel.ItemInitialized -= OnItemInitialized;
+        }
 
         public void Initialize()
         {
-            _clickModel.ShopItems
-                .Select(_shopView.ShopItemViewsMap, (x, y) => (x, y[x.ItemType]))
-                .Subscribe(HandleClick);
+            _clickModel.ItemInitialized += OnItemInitialized;
         }
 
-        private void HandleClick((ShopItem shopItem, ShopItemView shopItemView) shopItem)
+        private void OnItemInitialized()
         {
-            var buyingSequence = shopItem.shopItemView.Click
-                .OnClickAsAsyncEnumerable()
-                .Select(x => new { shopItem.shopItem, IsBuy = _shopModel.TryBuy(shopItem.shopItem.Cost.CurrentValue) });
-            
-            buyingSequence
-                .Where(x => x.IsBuy)
-                .Subscribe(x => x.shopItem.Level.Value++);
+            foreach (var (itemType, itemLevel) in _clickModel.ShopItemsLevel)
+            {
+                _shopView.ShopItemViewsMap[itemType].Click.OnClickAsAsyncEnumerable()
+                    .Where(_ => _shopModel.TryBuy(_clickModel.ShopItems[itemType].CurrentValue.Cost))
+                    .Subscribe(_ => itemLevel.Value++)
+                    .AddTo(ref _dispose);
+            }
         }
     }
 }

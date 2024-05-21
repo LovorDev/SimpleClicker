@@ -1,10 +1,16 @@
-﻿using R3;
+﻿using System;
+using System.Collections.Generic;
+using R3;
+using UnityEngine.UI;
 
 namespace Clicker.Scripts.Runtime.Model
 {
     public class ClickerModel: IClickModel, IEnemyModel, IShopModel
     {
-        public ReplaySubject<ShopItem> ShopItems { get; } = new ReplaySubject<ShopItem>();
+        public event Action ItemInitialized = () => { };
+        public Dictionary<ItemType, ReactiveProperty<ItemValueCost>> ShopItems { get; } = new ();
+        
+        public Dictionary<ItemType, ReactiveProperty<int>> ShopItemsLevel { get; } = new ();
         
         public ReactiveProperty<Enemy> Enemy { get; } = new ReactiveProperty<Enemy>();
         public ReactiveProperty<double> Gold { get; } = new ReactiveProperty<double>();
@@ -18,6 +24,11 @@ namespace Clicker.Scripts.Runtime.Model
             
             Gold.Value -= gold;
             return true;
+        }
+
+        public void CallInitialized()
+        {
+            ItemInitialized();
         }
     }
 }
