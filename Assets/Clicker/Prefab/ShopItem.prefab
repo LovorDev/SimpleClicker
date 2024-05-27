@@ -185,7 +185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 819cddd151794ae68fae713804b21ecd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <ItemType>k__BackingField: 0
+  <ItemType>k__BackingField: {fileID: 2202891478338425883}
   <Value>k__BackingField: {fileID: 392500073358793624}
   <Cost>k__BackingField: {fileID: 3775634374681991882}
   <Click>k__BackingField: {fileID: 6386203130126297597}

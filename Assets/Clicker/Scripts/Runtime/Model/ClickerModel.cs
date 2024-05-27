@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ObservableCollections;
 using R3;
-using UnityEngine.UI;
 
 namespace Clicker.Scripts.Runtime.Model
 {
-    public class ClickerModel: IClickModel, IEnemyModel, IShopModel
+    public class ClickerModel : IEnemyModel, IShopModel
     {
-        public event Action ItemInitialized = () => { };
-        public Dictionary<ItemType, ReactiveProperty<ItemValueCost>> ShopItems { get; } = new ();
-        
-        public Dictionary<ItemType, ReactiveProperty<int>> ShopItemsLevel { get; } = new ();
-        
+        public ObservableList<ItemType> ShopItems { get; } = new ObservableList<ItemType>();
+
+        public ObservableDictionary<ItemType, ShopItemModel> ShopItemModels { get; } =
+            new ObservableDictionary<ItemType, ShopItemModel>();
         public ReactiveProperty<Enemy> Enemy { get; } = new ReactiveProperty<Enemy>();
-        public ReactiveProperty<double> Gold { get; } = new ReactiveProperty<double>();
+        public ReactiveProperty<double> Gold { get; } = new ReactiveProperty<double>(300);
 
         public bool TryBuy(double gold)
         {
@@ -21,14 +18,9 @@ namespace Clicker.Scripts.Runtime.Model
             {
                 return false;
             }
-            
+
             Gold.Value -= gold;
             return true;
-        }
-
-        public void CallInitialized()
-        {
-            ItemInitialized();
         }
     }
 }

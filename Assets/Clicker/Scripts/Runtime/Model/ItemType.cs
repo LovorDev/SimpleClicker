@@ -6,6 +6,6 @@
         Crit,
         CritChance,
         AutoClick,
-        AutoClickMultiplier,
+        AutoClickMultiplier
     }
 }
