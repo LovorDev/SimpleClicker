@@ -7,15 +7,17 @@ namespace Clicker.Scripts.Runtime.Model
     {
         public Sprite Sprite { get; }
         public string Name { get; }
-        public ReactiveProperty<Hp> Hp { get; }
+        public double HpMax { get; }
+        public ReactiveProperty<double> Hp { get; }
 
-        public Enemy(Hp hp, Sprite sprite, string name)
+        public ReactiveCommand<Unit> Click { get; }
+        public Enemy(double hp, Sprite sprite, string name)
         {
-            Hp = new ReactiveProperty<Hp>();
-            Hp.OnNext(hp);
-
+            HpMax = hp;
+            Hp = new ReactiveProperty<double>(hp);
             Sprite = sprite;
             Name = name;
+            Click = new ReactiveCommand<Unit>();
         }
     }
 }

@@ -1,14 +1,14 @@
-﻿using ObservableCollections;
+﻿using System.Collections.Generic;
+using ObservableCollections;
 using R3;
 
 namespace Clicker.Scripts.Runtime.Model
 {
-    public class ClickerModel : IEnemyModel, IShopModel
+    public class ClickerModel : IEnemyModel, IMoneyModel, IShopItemsModel
     {
         public ObservableList<ItemType> ShopItems { get; } = new ObservableList<ItemType>();
 
-        public ObservableDictionary<ItemType, ShopItemModel> ShopItemModels { get; } =
-            new ObservableDictionary<ItemType, ShopItemModel>();
+        public ObservableDictionary<ItemType, IShopItemModel> ShopItemModels { get; } = new ObservableDictionary<ItemType, IShopItemModel>();
         public ReactiveProperty<Enemy> Enemy { get; } = new ReactiveProperty<Enemy>();
         public ReactiveProperty<double> Gold { get; } = new ReactiveProperty<double>(300);
 

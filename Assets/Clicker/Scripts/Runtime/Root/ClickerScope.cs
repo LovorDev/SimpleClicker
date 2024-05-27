@@ -23,6 +23,13 @@ namespace Clicker.Scripts.Runtime.Root
 
         [SerializeField]
         private ShopItemView _shopItemPrefab;
+        
+        [SerializeField]
+        private MoneyView _moneyView;
+
+        [SerializeField]
+        private EnemiesConfig _enemiesConfig;
+        
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -32,6 +39,10 @@ namespace Clicker.Scripts.Runtime.Root
             RegisterServices(builder);
 
             builder.RegisterEntryPoint<Startup>();
+
+            builder.RegisterInstance(_moneyView);
+            builder.RegisterEntryPoint<ViewModel<IMoneyModel, MoneyView>>(Lifetime.Scoped);
+            builder.Register<MoneyBinder>(Lifetime.Transient).AsImplementedInterfaces();
             
             builder.RegisterBuildCallback(_ =>
             {
@@ -41,6 +52,7 @@ namespace Clicker.Scripts.Runtime.Root
         }
         private void EnemyScope(IContainerBuilder builder)
         {
+            builder.RegisterInstance(_enemiesConfig);
             builder.RegisterInstance(_enemyView);
 
             builder.RegisterEntryPoint<EnemyController>();

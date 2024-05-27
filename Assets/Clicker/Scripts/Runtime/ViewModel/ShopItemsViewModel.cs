@@ -14,17 +14,17 @@ namespace Clicker.Scripts.Runtime.Controller
         private readonly ClickerModel _model;
         private readonly IShopItemModelService _service;
         private readonly IFactory<ShopItemView> _shopItemViewFactory;
-        private readonly IShopModel _shopModel;
+        private readonly IMoneyModel _moneyModel;
 
         private readonly Dictionary<ItemType, ShopItemViewModel> _viewModels = new Dictionary<ItemType, ShopItemViewModel>();
 
         public ShopItemsViewModel(IFactory<ShopItemView> shopItemViewFactory, ClickerModel model,
-            IShopItemModelService service, IShopModel shopModel)
+            IShopItemModelService service, IMoneyModel moneyModel)
         {
             _shopItemViewFactory = shopItemViewFactory;
             _model = model;
             _service = service;
-            _shopModel = shopModel;
+            _moneyModel = moneyModel;
         }
 
         public void Initialize()
@@ -45,7 +45,7 @@ namespace Clicker.Scripts.Runtime.Controller
 
             var view = _shopItemViewFactory.Create();
 
-            var viewModel = new ShopItemViewModel(new ShopItemBinder(), itemModel, view, _shopModel, _service);
+            var viewModel = new ShopItemViewModel(new ShopItemBinder(), itemModel, view, _moneyModel, _service);
             viewModel.Initialize();
             _viewModels.Add(itemType, viewModel);
         }

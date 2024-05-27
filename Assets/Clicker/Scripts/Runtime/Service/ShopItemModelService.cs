@@ -46,7 +46,7 @@ namespace Clicker.Scripts.Runtime.Service
             UpdateModel(model, newLevel);
         }
 
-        private void ActualizeModel(KeyValuePair<ItemType, ShopItemModel> itemModel)
+        private void ActualizeModel(KeyValuePair<ItemType, IShopItemModel> itemModel)
         {
             var level = 0;
             var itemType = itemModel.Key;
@@ -58,14 +58,14 @@ namespace Clicker.Scripts.Runtime.Service
 
             var model = itemModel.Value;
 
-            UpdateModel(model, level);
+            UpdateModel((ShopItemModel) model, level);
         }
         private void UpdateModel(ShopItemModel model, int level)
         {
             var newValues = _shopConfig.ShopItemConfigsMap[model.ItemType].ValueCostPairs[level];
 
-            model.Cost.OnNext(newValues.Cost);
-            model.Value.OnNext(newValues.Value);
+            model.NextCost(newValues.Cost);
+            model.NextValue(newValues.Value);
         }
     }
 }

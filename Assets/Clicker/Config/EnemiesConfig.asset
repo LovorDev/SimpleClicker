@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbb3a66483ba4693a6cd30a99b83067a, type: 3}
+  m_Name: EnemiesConfig
+  m_EditorClassIdentifier: 
+  <EnemyConfigs>k__BackingField:
+  - <Sprite>k__BackingField: {fileID: 21300000, guid: a0c5bb965b60545b79734ffd6ec9f124, type: 3}
+    <Name>k__BackingField: Fabrik
+    <HpMax>k__BackingField: 20
+  - <Sprite>k__BackingField: {fileID: 21300000, guid: 50d3cd2f336704fcf9cf5b293c10ba9c, type: 3}
+    <Name>k__BackingField: Iccd
+    <HpMax>k__BackingField: 40
+  - <Sprite>k__BackingField: {fileID: 21300000, guid: 190c43ac8c7af48e2ae7663a44f1c7ec, type: 3}
+    <Name>k__BackingField: Limb
+    <HpMax>k__BackingField: 100
+  - <Sprite>k__BackingField: {fileID: 21300000, guid: eddc3b652f54848828296504ee94ec04, type: 3}
+    <Name>k__BackingField: Manager
+    <HpMax>k__BackingField: 500
+  - <Sprite>k__BackingField: {fileID: 21300000, guid: cf27adadd6b1f42eebc0e8ab8f0d091d, type: 3}
+    <Name>k__BackingField: HomeLander
+    <HpMax>k__BackingField: 2000

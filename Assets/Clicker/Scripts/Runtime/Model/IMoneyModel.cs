@@ -2,7 +2,7 @@
 
 namespace Clicker.Scripts.Runtime.Model
 {
-    public interface IShopModel
+    public interface IMoneyModel
     {
         ReactiveProperty<double> Gold { get; }
         bool TryBuy(double gold);

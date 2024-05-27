@@ -1,35 +1,18 @@
-﻿using System;
-using Clicker.Scripts.Runtime.Model;
+﻿using Clicker.Scripts.Runtime.Model;
 using Clicker.Scripts.Runtime.View;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using R3;
+using UnityEngine;
 
 namespace Clicker.Scripts.Runtime.Controller
 {
-    public class EnemyBinder : IBinder<IEnemyModel, EnemyView>
-    {
-        private DisposableBag _disposable;
-        public void Bind(IEnemyModel model, EnemyView view)
-        {
-            model.Enemy.SkipWhile(x => x == null).Subscribe(OnNewEnemy).AddTo(ref _disposable);
-            void OnNewEnemy(Enemy enemy)
-            {
-                enemy.Hp.Select(x => (float)(x.Current / x.Max)).Subscribe( hp => view.HpBar.value = hp).AddTo(ref _disposable);
-                view.Image.sprite = enemy.Sprite;
-                view.Name.text = enemy.Name;
-            }
-        }
-        
-        public void Dispose()
-        {
-            _disposable.Dispose();
-        }
-    }
-    
     public class EnemyViewModel : ViewModel<IEnemyModel, EnemyView>
     {
-        public EnemyViewModel(IBinder<IEnemyModel, EnemyView> binder, IEnemyModel model, EnemyView view) : base(binder, model, view)
+        private readonly IShopItemsModel _clickModel;
+        public EnemyViewModel(IBinder<IEnemyModel, EnemyView> binder, IEnemyModel model, EnemyView view, IShopItemsModel clickModel) : base(binder, model, view)
         {
+            _clickModel = clickModel;
         }
         protected override void OnInitialize()
         {
@@ -39,6 +22,20 @@ namespace Clicker.Scripts.Runtime.Controller
         private void EnemyViewAppear(Enemy enemy)
         {
             _view.CanvasGroup.DOFade(1, .2f);
+            
+            enemy.Click.Subscribe(TryDealDamage).AddTo(ref _disposable);
+            
+            void TryDealDamage(Unit _)
+            {
+                var currentHp = enemy.Hp.CurrentValue;
+                var itemModels = _clickModel.ShopItemModels;
+                var click = itemModels[ItemType.Click].Value.CurrentValue;
+
+                var chance = itemModels[ItemType.CritChance].Value.CurrentValue <= Random.value;
+                var critMp = itemModels[ItemType.Crit].Value.CurrentValue;
+                
+                enemy.Hp.OnNext(currentHp - (chance ? click * critMp : click));
+            }
         }
     }
 }

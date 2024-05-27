@@ -7,10 +7,11 @@ namespace Clicker.Scripts.Runtime.Controller
 {
     public class ViewModel<TM, TV> : IInitializable, IDisposable where TV : Component
     {
-        protected readonly IBinder<TM, TV> _binder;
         protected readonly TM _model;
         protected readonly TV _view;
         protected DisposableBag _disposable;
+        
+        private readonly IBinder<TM, TV> _binder;
 
         public ViewModel(IBinder<TM, TV> binder, TM model, TV view)
         {
