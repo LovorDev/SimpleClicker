@@ -3,6 +3,7 @@ using Clicker.Scripts.Runtime.Config;
 using Clicker.Scripts.Runtime.Model;
 using ObservableCollections;
 using R3;
+using SaveSystem;
 using VContainer.Unity;
 
 namespace Clicker.Scripts.Runtime.Service
@@ -10,23 +11,26 @@ namespace Clicker.Scripts.Runtime.Service
     public class ShopItemModelService : IInitializable, IShopItemModelService
     {
         private readonly ClickerModel _clickerModel;
-        private readonly ISaveSystem _saveSystem;
+        private readonly ISaveContext<ShopItemsSavedData> _saveContext;
         private readonly ShopConfig _shopConfig;
 
         private Dictionary<ItemType, int> _itemsLevel = new Dictionary<ItemType, int>();
 
-        public ShopItemModelService(ISaveSystem saveSystem, ShopConfig shopConfig, ClickerModel clickerModel)
+        public ShopItemModelService(ISaveContext<ShopItemsSavedData> saveContext, ShopConfig shopConfig, ClickerModel clickerModel)
         {
-            _saveSystem = saveSystem;
+            _saveContext = saveContext;
             _shopConfig = shopConfig;
             _clickerModel = clickerModel;
         }
 
-        public async void Initialize()
+        public void Initialize()
         {
             _clickerModel.ShopItemModels.ObserveAdd().Select(x => x.Value).Subscribe(ActualizeModel);
-
-            _itemsLevel = await _saveSystem.Load(nameof(_itemsLevel), new Dictionary<ItemType, int>());
+            _saveContext.LoadingData.Subscribe(OnNewData);
+        }
+        private void OnNewData(ISavedData obj)
+        {
+            _itemsLevel = ((ShopItemsSavedData)obj).ItemsLevel;
             foreach (var item in _clickerModel.ShopItemModels)
             {
                 ActualizeModel(item);

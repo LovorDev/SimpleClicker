@@ -1,12 +1,15 @@
 ﻿using Clicker.Scripts.Runtime.Config;
 using Clicker.Scripts.Runtime.Controller;
+using Clicker.Scripts.Runtime.Extensions;
 using Clicker.Scripts.Runtime.Model;
 using Clicker.Scripts.Runtime.Service;
 using Clicker.Scripts.Runtime.View;
+using SaveSystem;
 using UnityEngine;
 using UnityEngine.Pool;
 using VContainer;
 using VContainer.Unity;
+using SaveController = Clicker.Scripts.Runtime.Service.SaveController;
 
 namespace Clicker.Scripts.Runtime.Root
 {
@@ -36,7 +39,7 @@ namespace Clicker.Scripts.Runtime.Root
             builder.Register<ClickerModel>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.RegisterInstance(_shopConfig);
             
-            RegisterServices(builder);
+            RegisterSaver(builder);
 
             builder.RegisterEntryPoint<Startup>();
 
@@ -73,9 +76,18 @@ namespace Clicker.Scripts.Runtime.Root
             
             builder.RegisterEntryPoint<ShopItemsViewModel>();
         }
-        private  void RegisterServices(IContainerBuilder builder)
+        private  void RegisterSaver(IContainerBuilder builder)
         {
-            builder.RegisterEntryPoint<PlayerPrefsSaver>().As<ISaveSystem>();
+            builder.RegisterSavedContext<ShopItemsSavedData>(Lifetime.Singleton);
+            builder.RegisterSavedContext<EnemySavedData>(Lifetime.Singleton);
+            
+            builder.Register<PlayerPrefsSaveProvider>(Lifetime.Singleton).As<ISaveProvider>();
+            
+            builder.RegisterEntryPoint<SaveController>();
+        }
+        private void S(IWriteSaveContext<ISavedData> s)
+        {
+            
         }
         private IObjectPool<ShopItemView> CreateShopItemPool()
         {

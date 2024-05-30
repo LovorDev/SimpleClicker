@@ -3,32 +3,30 @@ using Clicker.Scripts.Runtime.Model;
 using Clicker.Scripts.Runtime.Service;
 using Cysharp.Threading.Tasks;
 using R3;
+using SaveSystem;
 using VContainer.Unity;
 
 namespace Clicker.Scripts.Runtime.Controller
 {
     public class EnemyController : IInitializable
     {
-        private const string CurrentEnemy = nameof(CurrentEnemy);
-
         private readonly IEnemyModel _enemyModel;
         private readonly EnemiesConfig _enemiesConfig;
-        private readonly ISaveSystem _saveSystem;
-        public EnemyController(IEnemyModel enemyModel, EnemiesConfig enemiesConfig, ISaveSystem saveSystem)
+        private readonly ISaveContext<EnemySavedData> _saveContext;
+        public EnemyController(IEnemyModel enemyModel, EnemiesConfig enemiesConfig, ISaveContext<EnemySavedData> saveContext)
         {
             _enemyModel = enemyModel;
             _enemiesConfig = enemiesConfig;
-            _saveSystem = saveSystem;
+            _saveContext = saveContext;
         }
 
         public void Initialize()
         {
-            LoadEnemy().Forget();
+            _saveContext.LoadingData.Subscribe(OnDataChange);
         }
-        private async UniTaskVoid LoadEnemy()
-        {
-            var enemyLevel = await _saveSystem.Load<int>(CurrentEnemy);
-            SetNewEnemy(enemyLevel).Forget();
+        private void OnDataChange(ISavedData enemyLevel)
+        {          
+            SetNewEnemy(((EnemySavedData)enemyLevel).Level).Forget();
         }
 
         private async UniTask SetNewEnemy(int level)
